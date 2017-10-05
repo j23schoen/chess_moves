@@ -88,6 +88,51 @@ def test_create_graph_for_top_edge():
 
     result = create_graph(numbers)
 
-    d = {key: sorted(value) for (key, value) in graph.items()}
+    d = {key: sorted(value) for (key, value) in result.items()}
 
     assert d== graph
+
+def test_corners():
+    numbers = [0, 7, 56, 63]
+    graph = {
+        0: [10, 17],
+        7: [13, 22],
+        56: [41, 50],
+        63: [46, 53]
+    }
+
+    result = create_graph(numbers)
+    d = {key: sorted(value) for (key, value) in graph.items()}
+    assert d== graph
+
+def test_left_edge():
+    numbers = [8, 40]
+    graph = {
+        8: [2, 18, 25],
+        40: [25, 34, 50, 57]
+    }
+
+    result = create_graph(numbers)
+    d = {key: sorted(value) for (key, value) in result.items()}
+    assert d== graph
+
+def test_right_edge():
+    numbers = [31, 55]
+    graph = {
+        31: [14, 21, 37, 46],
+        55: [38, 45, 61]
+    }
+    result = create_graph(numbers)
+    d = {key: sorted(value) for (key, value) in result.items()}
+    assert d== graph
+
+def test_middle():
+    numbers = [26, 44]
+    graph = {
+        26: [9, 11, 16, 20, 32, 36, 41, 43],
+        44: [27, 29, 34, 38, 50, 54, 59, 61]
+    }
+
+    result = create_graph(numbers)
+    d = {key: sorted(value) for (key, value) in result.items()}
+    assert d == graph
