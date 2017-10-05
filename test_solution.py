@@ -23,7 +23,6 @@ right_edges = [7, 15, 23, 31, 39, 47, 55, 63]
 def create_graph(numbers):
     graph = {}
 
-    import ipdb; ipdb.set_trace()
     for i in numbers:
         graph[i] = []
         number_is_top_edge = True if i in top_edges else False
@@ -33,7 +32,23 @@ def create_graph(numbers):
         # traverse vertically up the board
         if not number_is_top_edge and i - 16 >= 0:
             # can traverse upwards
+            working_number = i - 16
+            # try to go one left
+            if not number_is_left_edge:
+                graph[i].append(working_number - 1)
+            # try to go one right
+            if not number_is_right_edge:
+                graph[i].append(working_number + 1)
             pass
+        # traverse down the board
+        if not number_is_bottom and i + 16 <= 63:
+            # can traverse down
+            working_number = i + 16
+            # try to go one left
+            if not number_is_left_edge:
+                graph[i].append(working_number - 1)
+            if not number_is_right_edge:
+                graph[i].append(working_number + 1)
         # traverse left 2 places
         if not number_is_left_edge and i - 1 not in left_edges:
             # go left two places
@@ -54,7 +69,7 @@ def create_graph(numbers):
             # try to down two rows (16)
             if working_number + 8 not in bottom_edges:
                 graph[i].append(working_number + 8)
-            
+
 
     return graph
 
@@ -62,13 +77,17 @@ def test_create_graph_for_top_edge():
     numbers = [0, 1, 2, 3, 4, 5, 6, 7]
     graph = {
         0: [10, 17],
-        1: [16, 18, 11],
-        2: [8, 12, 19, 17],
+        1: [11, 16, 18],
+        2: [8, 12, 17, 19],
         3: [9, 13, 18, 20],
         4: [10, 14, 19, 21],
         5: [11, 15, 20, 22],
         6: [12, 21, 23],
-        7: [22, 13]
+        7: [13, 22]
     }
 
-    assert create_graph(numbers) == graph
+    result = create_graph(numbers)
+
+    d = {key: sorted(value) for (key, value) in graph.items()}
+
+    assert d== graph
