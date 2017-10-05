@@ -70,8 +70,27 @@ def create_graph(numbers):
             if working_number + 8 not in bottom_edges:
                 graph[i].append(working_number + 8)
 
-
     return graph
+
+def answer(start, end):
+    numbers = list(range(0, 64))
+    graph = create_graph(numbers)
+    return find_shortest_path(graph, start, end)
+    
+def find_shortest_path(graph, start, end, path=[]):
+    path = path + [start]
+    if start == end:
+        return path
+    if not graph.has_key(start):
+        return None
+    shortest = None
+    for node in graph[start]:
+        if node not in path:
+            newpath = find_shortest_path(graph, node, end, path)
+            if newpath:
+                if not shortest or len(newpath) < len(shortest):
+                    shortest = newpath
+    return shortest
 
 def test_create_graph_for_top_edge():
     numbers = [0, 1, 2, 3, 4, 5, 6, 7]
@@ -136,3 +155,7 @@ def test_middle():
     result = create_graph(numbers)
     d = {key: sorted(value) for (key, value) in result.items()}
     assert d == graph
+
+def test_get_shortest_path():
+    result = answer(19, 36)
+    assert result == 3
