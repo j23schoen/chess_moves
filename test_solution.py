@@ -15,6 +15,7 @@
 # -------------------------
 # |56|57|58|59|60|61|62|63|
 
+
 top_edges = [0, 1, 2, 3, 4, 5, 6, 7]
 bottom_edges = [56, 57, 58, 59, 60, 61, 62, 63]
 left_edges = [0, 8, 16, 24, 32, 40, 48, 56]
@@ -25,10 +26,10 @@ def create_graph(numbers):
 
     for i in numbers:
         graph[i] = []
-        number_is_top_edge = True if i in top_edges else False
-        number_is_bottom = True if i in bottom_edges else False
-        number_is_left_edge = True if i in left_edges else False
-        number_is_right_edge = True if i in right_edges else False
+        number_is_top_edge = i in top_edges 
+        number_is_bottom = i in bottom_edges
+        number_is_left_edge = i in left_edges 
+        number_is_right_edge = i in right_edges 
         # traverse vertically up the board
         if not number_is_top_edge and i - 16 >= 0:
             # can traverse upwards
@@ -71,26 +72,45 @@ def create_graph(numbers):
                 graph[i].append(working_number + 8)
 
     return graph
-
+    
+# visits all the nodes of a graph (connected coamponent) using BFS
+def bfs_shortest_path(graph, start, goal):
+    # keep track of explored nodes
+    explored = []
+    # keep track of all the paths to be checked
+    queue = [[start]]
+ 
+    # return path if start is goal
+    if start == goal:
+        return "That was easy! Start = goal"
+    # keeps looping until all possible paths have been checked
+    while queue:
+        # pop the first path from the queue
+        path = queue.pop(0)
+        # get the last node from the path
+        node = path[-1]
+        if node not in explored:
+            neighbours = graph[node]
+            # go through all neighbour nodes, construct a new path and
+            # push it into the queue
+            for neighbour in neighbours:
+                new_path = list(path)
+                new_path.append(neighbour)
+                queue.append(new_path)
+                # return path if neighbour is goal
+                if neighbour == goal:
+                    return len(new_path) - 1
+ 
+            # mark node as explored
+            explored.append(node)
+ 
+    # in case there's no path between the 2 nodes
+    return "no connecting path."
+    
 def answer(start, end):
     numbers = list(range(0, 64))
     graph = create_graph(numbers)
-    return find_shortest_path(graph, start, end)
-    
-def find_shortest_path(graph, start, end, path=[]):
-    path = path + [start]
-    if start == end:
-        return path
-    if not graph.has_key(start):
-        return None
-    shortest = None
-    for node in graph[start]:
-        if node not in path:
-            newpath = find_shortest_path(graph, node, end, path)
-            if newpath:
-                if not shortest or len(newpath) < len(shortest):
-                    shortest = newpath
-    return shortest
+    return bfs_shortest_path(graph, start, end)
 
 def test_create_graph_for_top_edge():
     numbers = [0, 1, 2, 3, 4, 5, 6, 7]
@@ -158,4 +178,4 @@ def test_middle():
 
 def test_get_shortest_path():
     result = answer(19, 36)
-    assert result == 3
+    assert result == 1
